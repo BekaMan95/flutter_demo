@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/task_provider.dart';
+import '../providers/theme_provider.dart';
 import '../models/task.dart';
 import 'task_detail_screen.dart';
 
@@ -12,8 +13,20 @@ class TaskListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Tasks'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Consumer<ThemeProvider>(
+              builder: (context, themeProvider, child) {
+                return Icon(
+                  themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                );
+              },
+            ),
+            onPressed: () {
+              context.read<ThemeProvider>().toggleTheme();
+            },
+          ),
+        ],
       ),
       body: Consumer<TaskProvider>(
         builder: (context, taskProvider, child) {
@@ -59,6 +72,7 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
@@ -81,9 +95,10 @@ class TaskCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       task.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -108,7 +123,7 @@ class TaskCard extends StatelessWidget {
                 Text(
                   task.description,
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: theme.colorScheme.onSurface.withOpacity(0.7),
                   ),
                 ),
               ],
@@ -118,13 +133,13 @@ class TaskCard extends StatelessWidget {
                   Icon(
                     Icons.calendar_today,
                     size: 16,
-                    color: Colors.grey[600],
+                    color: theme.colorScheme.onSurface.withOpacity(0.7),
                   ),
                   const SizedBox(width: 4),
                   Text(
                     'Due: ${task.dueDate.toString().split(' ')[0]}',
                     style: TextStyle(
-                      color: Colors.grey[600],
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
                     ),
                   ),
                 ],
@@ -133,16 +148,16 @@ class TaskCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 LinearProgressIndicator(
                   value: task.completionPercentage / 100,
-                  backgroundColor: Colors.grey[200],
+                  backgroundColor: theme.colorScheme.surfaceVariant,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    Theme.of(context).colorScheme.primary,
+                    theme.colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '${task.milestones.where((m) => m.isCompleted).length}/${task.milestones.length} milestones completed',
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: theme.colorScheme.onSurface.withOpacity(0.7),
                     fontSize: 12,
                   ),
                 ),

@@ -88,11 +88,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.task == null ? 'New Task' : 'Edit Task'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Colors.white,
         actions: [
           if (widget.task != null)
             IconButton(
@@ -130,17 +129,25 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Title',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                labelStyle: TextStyle(color: theme.colorScheme.primary),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.colorScheme.primary),
+                ),
               ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _descriptionController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Description',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                labelStyle: TextStyle(color: theme.colorScheme.primary),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.colorScheme.primary),
+                ),
               ),
               maxLines: 3,
             ),
@@ -148,7 +155,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             ListTile(
               title: const Text('Due Date'),
               subtitle: Text(_dueDate.toString().split(' ')[0]),
-              trailing: const Icon(Icons.calendar_today),
+              trailing: Icon(
+                Icons.calendar_today,
+                color: theme.colorScheme.primary,
+              ),
               onTap: () async {
                 final date = await showDatePicker(
                   context: context,
@@ -175,11 +185,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'Milestones',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -188,9 +199,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                   Expanded(
                     child: TextField(
                       controller: _milestoneController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'New Milestone',
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
+                        labelStyle: TextStyle(color: theme.colorScheme.primary),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: theme.colorScheme.primary),
+                        ),
                       ),
                     ),
                   ),
@@ -199,8 +214,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     onPressed: _addMilestone,
                     icon: const Icon(Icons.add),
                     style: IconButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Colors.white,
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: theme.colorScheme.onPrimary,
                     ),
                   ),
                 ],
@@ -216,7 +231,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     itemBuilder: (context, index) {
                       final milestone = task.milestones[index];
                       return ListTile(
-                        title: Text(milestone.title),
+                        title: Text(
+                          milestone.title,
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
                         leading: Checkbox(
                           value: milestone.isCompleted,
                           onChanged: (value) {
@@ -228,7 +248,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           },
                         ),
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete),
+                          icon: Icon(
+                            Icons.delete,
+                            color: theme.colorScheme.error,
+                          ),
                           onPressed: () {
                             taskProvider.deleteMilestone(task.id, milestone.id);
                           },
