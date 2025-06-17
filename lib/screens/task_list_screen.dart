@@ -30,6 +30,12 @@ class TaskListScreen extends StatelessWidget {
       ),
       body: Consumer<TaskProvider>(
         builder: (context, taskProvider, child) {
+          if (taskProvider.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
           if (taskProvider.tasks.isEmpty) {
             return const Center(
               child: Text(
@@ -104,16 +110,23 @@ class TaskCard extends StatelessWidget {
                   ),
                   Checkbox(
                     value: task.isCompleted,
-                    onChanged: (value) {
-                      final updatedTask = Task(
-                        id: task.id,
-                        title: task.title,
-                        description: task.description,
-                        dueDate: task.dueDate,
-                        isCompleted: value ?? false,
-                        milestones: task.milestones,
-                      );
-                      context.read<TaskProvider>().updateTask(updatedTask);
+                    onChanged: (value) async {
+                      try {
+                        final updatedTask = Task(
+                          id: task.id,
+                          title: task.title,
+                          description: task.description,
+                          dueDate: task.dueDate,
+                          isCompleted: value ?? false,
+                          milestones: task.milestones,
+                        );
+                        await context.read<TaskProvider>().updateTask(updatedTask);
+                      } catch (e) {
+                        print('Error updating task: $e');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Failed to update task')),
+                        );
+                      }
                     },
                   ),
                 ],

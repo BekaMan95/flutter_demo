@@ -40,7 +40,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     super.dispose();
   }
 
-  void _saveTask() {
+  Future<void> _saveTask() async {
     if (_titleController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a title')),
@@ -51,7 +51,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     final taskProvider = context.read<TaskProvider>();
 
     if (widget.task == null) {
-      taskProvider.addTask(
+      await taskProvider.addTask(
         _titleController.text,
         _descriptionController.text,
         _dueDate,
@@ -65,13 +65,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
         isCompleted: _isCompleted,
         milestones: widget.task!.milestones,
       );
-      taskProvider.updateTask(updatedTask);
+      await taskProvider.updateTask(updatedTask);
     }
 
     Navigator.pop(context);
   }
 
-  void _addMilestone() {
+  Future<void> _addMilestone() async {
     if (_milestoneController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a milestone title')),
@@ -79,7 +79,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       return;
     }
 
-    context.read<TaskProvider>().addMilestone(
+    await context.read<TaskProvider>().addMilestone(
           widget.task!.id,
           _milestoneController.text,
         );
@@ -108,8 +108,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         child: const Text('Cancel'),
                       ),
                       TextButton(
-                        onPressed: () {
-                          context.read<TaskProvider>().deleteTask(widget.task!.id);
+                        onPressed: () async {
+                          await context.read<TaskProvider>().deleteTask(widget.task!.id);
                           Navigator.pop(context); // Close dialog
                           Navigator.pop(context); // Return to task list
                         },
@@ -239,8 +239,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         ),
                         leading: Checkbox(
                           value: milestone.isCompleted,
-                          onChanged: (value) {
-                            taskProvider.updateMilestone(
+                          onChanged: (value) async {
+                            await taskProvider.updateMilestone(
                               task.id,
                               milestone.id,
                               isCompleted: value,
@@ -252,8 +252,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             Icons.delete,
                             color: theme.colorScheme.error,
                           ),
-                          onPressed: () {
-                            taskProvider.deleteMilestone(task.id, milestone.id);
+                          onPressed: () async {
+                            await taskProvider.deleteMilestone(task.id, milestone.id);
                           },
                         ),
                       );

@@ -4,7 +4,9 @@ import 'providers/task_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/task_list_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
   runApp(const MyApp());
 }
 
@@ -24,6 +26,7 @@ class MyApp extends StatelessWidget {
             title: 'Task Manager',
             theme: themeProvider.currentTheme,
             home: const TaskListScreen(),
+            debugShowCheckedModeBanner: false,
           );
         },
       ),
